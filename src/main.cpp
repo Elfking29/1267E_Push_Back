@@ -1,10 +1,12 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "pros/misc.h"
+#include "pros/screen.h"
 
 void initialize() {}
 
 int auto_select = 0;
+screen_touch_status_s_t brainScreenStatus; // for new auto selector?
 
 void disabled() {}
 
@@ -36,7 +38,25 @@ void opcontrol() {
 	// Active opcontrol code
 	while (true){
 
+		// Testing code for possible auto selecter 
+		brainScreenStatus = pros::c::screen_touch_status();
+		pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Testing Text Woah", brainScreenStatus.touch_status);
+
+
 		// Drive code
+		int leftX = Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+		int leftY = Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int rightX = Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		int rightY = Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+
+		// currently set full tank drive mode, will improve later
+		FL.move(leftY);
+		ML.move(leftY);
+		BL.move(leftY);
+
+		FR.move(rightY);
+		MR.move(rightY);
+		BR.move(rightY);
 
 
 		// Buttons
