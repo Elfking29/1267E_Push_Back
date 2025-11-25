@@ -1,5 +1,3 @@
-#include "pros/motors.hpp" 
-
 using namespace pros;
 //Using extern in C++ isn't great practice, but it is easier and what VEXCode uses.
 
@@ -19,7 +17,8 @@ extern Motor Intake;
 extern Motor Cover;
 
 // Pneumatics 
-
+extern pros::adi::Pneumatics tube_piston;
+extern pros::adi::Pneumatics lift_piston;
 
 // Sensors
 
