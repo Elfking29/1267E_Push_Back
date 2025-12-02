@@ -26,7 +26,7 @@ void opcontrol() {
 		int leftVal = rightY+leftX;
 		int rightVal = rightY-leftX;
 
-		// currently set full tank drive mode, will improve later
+		// currently set split arcade
 		FL.move(leftVal);
 		ML.move(leftVal);
 		BL.move(leftVal);
@@ -47,10 +47,10 @@ void opcontrol() {
 		int button_left = Con1.get_digital(E_CONTROLLER_DIGITAL_LEFT); // unassigned 
 		int button_right = Con1.get_digital(E_CONTROLLER_DIGITAL_RIGHT); // unassigned		
 
-		int button_l1 = Con1.get_digital(E_CONTROLLER_DIGITAL_L1); // unassigned 
-		int button_l2 = Con1.get_digital(E_CONTROLLER_DIGITAL_L2); // unassigned 
-		int button_r1 = Con1.get_digital(E_CONTROLLER_DIGITAL_R1); // unassigned 
-		int button_r2 = Con1.get_digital(E_CONTROLLER_DIGITAL_R2); // unassigned
+		int button_l1 = Con1.get_digital(E_CONTROLLER_DIGITAL_L1); // Match Load Collector 
+		int button_l2 = Con1.get_digital(E_CONTROLLER_DIGITAL_L2); // High/Low Switcher 
+		int button_r1 = Con1.get_digital(E_CONTROLLER_DIGITAL_R1); // Scoring forward 
+		int button_r2 = Con1.get_digital(E_CONTROLLER_DIGITAL_R2); // Scoring reverse
 		// End Buttons
 
 		//Full Intake
@@ -81,6 +81,8 @@ void opcontrol() {
 		}
 		else if (!button_l2){lift_lock=false;}
 
+
+		
 		//10 msec loop
 		pros::Task::delay_until(&sleep_time, 10);
 	}

@@ -21,7 +21,7 @@
  * comment the following line out.
  *
  * For instance, E_CONTROLLER_MASTER has a shorter name: CONTROLLER_MASTER.
- * E_CONTROLLER_MASTER is pedantically correct within the PROS styleguide, but
+ * E_CONTROLLER_MASTER is pedantically correct within the PROS style guide, but
  * not convenient for most student programmers.
  */
 #define PROS_USE_SIMPLE_NAMES
