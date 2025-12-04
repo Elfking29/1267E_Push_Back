@@ -36,8 +36,8 @@
 
 #include "api.h"
 #include "robot_config.h"
-#include "initialize.h"
 #include "functions.h"
+#include "autons.h"
 
 /**
  * You should add more #includes here

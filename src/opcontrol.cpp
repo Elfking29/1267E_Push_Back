@@ -11,7 +11,6 @@ void opcontrol() {
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
 	Cover.set_brake_mode(MOTOR_BRAKE_COAST);
 
-
 	// Active opcontrol code
 	while (true){
 
@@ -23,8 +22,8 @@ void opcontrol() {
 		int rightX = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),deadzone);
 		int rightY = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y),deadzone);
 
-		int leftVal = rightY+leftX;
-		int rightVal = rightY-leftX;
+		int leftVal = rightY+leftY+leftX;
+		int rightVal = rightY+leftY-leftX;
 
 		// currently set split arcade
 		FL.move(leftVal);
@@ -82,7 +81,7 @@ void opcontrol() {
 		else if (!button_l2){lift_lock=false;}
 
 
-		
+
 		//10 msec loop
 		pros::Task::delay_until(&sleep_time, 10);
 	}

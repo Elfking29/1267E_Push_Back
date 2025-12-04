@@ -22,3 +22,6 @@ extern pros::adi::Pneumatics lift_piston;
 
 // Sensors
 
+extern adi::DigitalIn auto_selector;
+extern pros::Imu imu;
+extern pros::Rotation vertical_encoder;

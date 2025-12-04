@@ -31,3 +31,6 @@ pros::adi::Pneumatics lift_piston('f', false);
 
 // Sensors
 
+adi::DigitalIn auto_selector('d');
+pros::Imu imu(16);
+pros::Rotation vertical_encoder(21);
