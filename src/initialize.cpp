@@ -7,7 +7,8 @@
  */
 
 void initialize() {
-
+	imu.reset(true);
+	colory.set_led_pwm(100);
 }
 
 /**

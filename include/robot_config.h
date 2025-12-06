@@ -1,3 +1,4 @@
+#include "pros/optical.hpp"
 using namespace pros;
 //Using extern in C++ isn't great practice, but it is easier and what VEXCode uses.
 
@@ -25,3 +26,4 @@ extern pros::adi::Pneumatics lift_piston;
 extern adi::DigitalIn auto_selector;
 extern pros::Imu imu;
 extern pros::Rotation vertical_encoder;
+extern pros::Optical colory;
