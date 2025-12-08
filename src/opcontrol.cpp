@@ -90,14 +90,14 @@ void opcontrol() {
 		}
 		else if (!button_l2){lift_lock=false;}
 
-		//Color Sorting
-		if (1==1){
+		//Color Sorting - IGNORE FOR NOW
+		/*if (1==1){
 			if (within(colory.get_hue(),220-color,10)){
 				lift_piston.retract();
 			}
 			else {lift_piston.extend();}
 		}
-		pros::screen::print(TEXT_LARGE,2,"%f",colory.get_hue());
+		pros::screen::print(TEXT_LARGE,2,"%f",colory.get_hue());*/
 		 
 		//10 msec loop
 		pros::Task::delay_until(&sleep_time, 10);
