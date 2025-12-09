@@ -38,6 +38,7 @@
 #include "robot_config.h"
 #include "functions.h"
 #include "autons.h"
+#include "classes.h"
 
 /**
  * You should add more #includes here

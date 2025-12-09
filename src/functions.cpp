@@ -24,3 +24,14 @@ bool within(double number, double target, double range){
     if (number<target+range and number>target-range){return true;}
     return false;
 }
+
+void move_drive_motors(float Left_value, float Right_value){
+    //Move all motors with given value [-127,127]
+	FL.move(Left_value);
+    ML.move(Left_value);
+	BL.move(Left_value);
+		
+	FR.move(Right_value);
+    MR.move(Right_value);
+	BR.move(Right_value);
+}

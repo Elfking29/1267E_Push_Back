@@ -8,6 +8,8 @@ void low_auton(){
     // wait until the robot has traveled 2 inches
     chassis.waitUntil(2);
     //ignore below.. vvv
+
+    
     // output "traveled 10 inches" to the console
     std::cout << "traveled 10 inches" << std::endl;
     // turn the robot to face 270 degrees
