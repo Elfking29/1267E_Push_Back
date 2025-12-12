@@ -30,3 +30,4 @@ extern pros::Optical colory;
 
 //Variables
 extern bool color;
+extern bool hilo;

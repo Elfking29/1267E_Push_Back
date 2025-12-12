@@ -125,7 +125,7 @@ void opcontrol() {
 
 		//Color Sorting
 
-		//This part manually disables color sorting
+		//This part manually toggles color sorting
 		if (Con1.get_digital_new_press(DIGITAL_DOWN)){
 			if (sort_lock!=1){
 				sort_lock = 2-sort_lock;
@@ -133,7 +133,7 @@ void opcontrol() {
 		}
 
 		current_color = colory.get_hue();
-		if (1==1){
+		if (!sort_lock){
 			if (within(current_color,hue[color],10)){
 				lift_piston.extend();
 			}
@@ -143,9 +143,9 @@ void opcontrol() {
 		}		
 		
 		//Printing
-		if (!count%20){Con1.print(0, 0, "Line 1");count=0;}
-		else if (!count%15){Con1.print(0, 0, "Bat:%d Con:%d",pros::battery::get_capacity(),Con1.get_battery_capacity());}
-		else if (!count%10){Con1.print(0, 0, "Line 1");}
+		if (!count%20){Con1.print(0, 0, "Sort 0-ON: %d",sort_lock);count=0;}
+		else if (!count%15){Con1.print(1, 0, "Bat:%d Con:%d",pros::battery::get_capacity(),Con1.get_battery_capacity());}
+		else if (!count%10){}//Con1.print(2, 0, "Line 3");}
 		else if (!count%5){}//Could do Rumble here
 
 

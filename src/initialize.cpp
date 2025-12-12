@@ -100,6 +100,7 @@ void competition_initialize() {
         }
 
         color=color_type.toggled();
+        hilo=auton_side.toggled();
 
 		if (!auto_select){str="Skills";}
 		else if (auto_select==1){
@@ -119,6 +120,35 @@ void competition_initialize() {
 
     }
 }
+
+/*
+ void competition_initialize() {
+	std::string str;
+    bool lock = false;
+	while (1==1){
+		if (auto_selector.get_value() and !lock){
+            lock=true;
+			auto_select+=1;
+			auto_select%=4;
+			switch (auto_select){
+				case 0:
+					str="High 3";break;
+				case 1:
+					str="Low 3";break;
+				case 2:
+					str="High 1";break;
+				case 3:
+					str="Low 1";break;
+			}
+			screen::print(pros::E_TEXT_MEDIUM,2,"%s",str);
+		}
+        else if (!auto_selector.get_value()){lock=false;}
+		pros::Task::delay(10); //Delay before repeat
+		color = auto_select%2;	
+        hilo=color;
+	}
+}
+*/
 
 /**
  * Runs the user autonomous code. This function will be started in its own task

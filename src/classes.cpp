@@ -39,7 +39,7 @@ void DrivePID::prepare(double distangle, bool turn, bool rev){
         //gear ratio (motor/wheel)
     }
     else {
-        this->target=(distangle+imu.get_rotation())*(1-2*color);
+        this->target=(distangle+imu.get_rotation())*(1-2*hilo);
     }
     //Set correct k constants
     this->kp=this->turn==0?this->kp_fb:this->kp_tu;

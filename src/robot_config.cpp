@@ -39,3 +39,4 @@ pros::Optical colory(5); //Red ~10, Blue ~210, Default ~40
 
 //Variables
 bool color;
+bool hilo;
