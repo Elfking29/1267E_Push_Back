@@ -1,93 +1,5 @@
 #include "main.h"
 #include <cmath>
-//All classes need to be defined & externed in this and the .h file
-//Use multiple inertial sensors
-MultiIMU::MultiIMU(int port_one, int port_two, int port_three):
-    imu_one (port_one),
-    imu_two (port_two),
-    imu_three (port_three)
-{}
-
-void MultiIMU::calibrate(){
-    this->imu_one.reset(false);
-    this->imu_two.reset(false);
-    this->imu_three.reset(false);
-}
-
-void MultiIMU::reset(){
-    this->imu_one.reset(false);
-    this->imu_two.reset(false);
-    this->imu_three.reset(false);
-}
-
-float MultiIMU::one_data_point(float value_one, float value_two, float value_three){
-    //If all three values are equal then return the equal value
-    //This likely will not happen a lot
-    if (round(value_one) == round(value_two) and round(value_two) == round(value_three)){
-        return value_one;
-    }
-
-    //This finds the biggest and smallest value
-    float first = std::min({value_one, value_two, value_three});
-    float third = std::max({value_one, value_two, value_three});    
-    //This gets the value in the middle
-    float second;
-    if (value_one == first and value_two == third or value_two == first and value_one == third){
-        float second = value_three;
-    }
-    else if (value_two == first and value_three == third or value_three == first and value_one == third){
-        float second = value_one;
-    }
-    else {
-        float second = value_two;
-    }
-
-    //The middle value is always used, for it is 
-    //closer to the average of all three.
-    //This if statement checks if the first sensor 
-    //or the third one is closer to the value of the 
-    //second, then returns the average of the selected
-    //two sensors as the value.
-
-    if (second-first <= third-second){
-        return (first+second)/2;
-    }
-    else{
-        return (second+third)/2;
-    }
-}
-
-float MultiIMU::get_rotation(){
-    return one_data_point(this->imu_one.get_rotation(),this->imu_two.get_rotation(),this->imu_three.get_rotation());
-}
-
-float MultiIMU::get_heading(){
-    return one_data_point(this->imu_one.get_heading(),this->imu_two.get_heading(),this->imu_three.get_heading());   
-}
-
-void MultiIMU::tare_rotation(){
-    this->imu_one.tare_rotation();
-    this->imu_two.tare_rotation();
-    this->imu_three.tare_rotation();
-}
-
-void MultiIMU::tare_heading(){
-    this->imu_one.tare_heading();
-    this->imu_two.tare_heading();
-    this->imu_three.tare_heading();
-}
-
-void MultiIMU::set_heading(int heading){
-    this->imu_one.set_heading(heading);
-    this->imu_two.set_heading(heading);
-    this->imu_three.set_heading(heading);
-}
-
-void MultiIMU::set_rotation(int rotation){
-    this->imu_one.set_rotation(rotation);
-    this->imu_two.set_rotation(rotation);
-    this->imu_three.set_rotation(rotation);
-}
 
 //Drivetrain PID
 DrivePID::DrivePID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,double kd_tu, double dt){
@@ -257,12 +169,12 @@ void DrivePID::hturn(double angle){
     //if (within(this->l_error,0,this->breakpoint)){this->finish=true;}
     
     if (within(this->l_error,0,this->breakpoint)){
-        pros::screen::print(TEXT_LARGE,5,"1");
+        //pros::screen::print(TEXT_LARGE,5,"1");
         if (this->settle<this->s+1){this->settle+=1;}
         else if (settle>=this->s){this->finish=true;}
-        else {settle=0;pros::screen::print(TEXT_LARGE,5,"0");}
+        else {settle=0;/*pros::screen::print(TEXT_LARGE,5,"0");*/}
     }
-    pros::screen::print(TEXT_LARGE,0,"%i,%i,%f",this->settle,this->l_error);
+    //pros::screen::print(TEXT_LARGE,0,"%i,%i,%f",this->settle,this->l_error);
     
 
     //R
@@ -322,92 +234,91 @@ How to use PIDmove:
     }
 */
 
-//Smart Controller Printing
-SmartCon::SmartCon(int total_time){
-    this->first_check = "";
-    this->second_check = "";
-    this->third_check = "";
-    this->debug=false;
-    this->total_time = total_time;
+//Buttons On Screen
+ScreenButton::ScreenButton(int x, int y, int length, int height, int color_one, int color_two, std::string str_one, std::string str_two, int border_one, int border_two, bool toggled){
+    this->x=x;
+    this->y=y;
+    this->length=length;
+    this->height=height;
+    this->color_one=color_one;
+    this->color_two=color_two;
+    this->toggle=toggled;
+    this->enable=false;
+    this->str_one=str_one;
+    this->str_two=str_two;
+    this->border_one=border_one;
+    this->border_two=border_two;
 }
-std::tuple<int,std::string> SmartCon::print(std::string first, std::string second, std::string third, std::string rumble, std::tuple<int,int,int> order){
-    this->return_num = 0;
-    this->return_string = "";
-    this->line=3;
-    if (rumble != ""){
-        return_string = rumble;
-        return_num = 4;
-    }
-    else if (first != this->first_check){
-        return_string = first;
-        return_num = 1;
-        this->first_check = first;
-    }
-    else if (second != this->second_check){
-        return_string = second;
-        return_num = 2;
-        this->second_check = second;
-    }
-    else if (third != this->third_check){
-        return_string = third;
-        return_num = 3;
-        this->third_check = third;
-    }
-    
-    if (this->debug == false and this->return_num != 0){
-        if (return_num == 4){
-            //pros::Controller(pros::E_CONTROLLER_MASTER).rumble(this->return_string.c_str());
+
+void ScreenButton::draw_button(){
+    int margin = 3;
+    std::string str_use;
+    int color;
+    double scale;
+    if (enable){ //Enabled Button
+        //Draw toggled outline if needed
+        //Also set other things
+        if (toggle){
+            screen::set_pen(this->border_two);
+            str_use = this->str_two;
+            color = this->color_two;
+            //Border, string, text
         }
-        else{
-            if (return_num == 1){
-                line = std::get<0>(order);
-            }
-            else if (return_num == 2){
-                line = std::get<1>(order);
-            }
-            else if (return_num == 3){
-                line = std::get<2>(order);
-            }
-            pros::Controller(pros::E_CONTROLLER_MASTER).clear_line(line); //Might need this
-            pros::Controller(pros::E_CONTROLLER_MASTER).print(line,0,this->return_string.c_str());
+        else {
+            screen::set_pen(this->border_one);
+            str_use = this->str_one;
+            color = this->color_one;
+            //Border, string, text
         }
-        //delay(40);
+        screen::fill_rect(this->x-margin,this->y-margin,
+        this->x+this->length+margin,this->y+this->height+margin);
+        //Draw actual button
+        screen::set_pen(color);
+        screen::fill_rect(this->x,this->y,this->x
+        +this->length,this->y+this->height);
+        //Draw text
+        screen::set_pen(0xfffffff);
+        scale = 1.0/int(str_use.size());
+        screen::print(TEXT_LARGE,int(this->x+scale*this->length)
+        ,int(this->y+scale*this->height),"%s",str_use);        
     }
-    return std::tuple<int,std::string>{return_num,return_string};
-}
-
-std::string SmartCon::get_time(){
-    this->raw_ticks += 1;
-    if (this->raw_ticks >= 20){
-        this->raw_sec += 1;
-        this->raw_ticks = 0;
+    else {
+        //Disabled Button
+        screen::set_pen(0x000000);
+        screen::fill_rect(this->x-margin,this->y-margin,
+        this->x+this->length+margin,this->y+this->height+margin);
     }
-    this->return_sec = floor((this->total_time-this->raw_sec)%60);
-    this->return_min = 1-floor(this->raw_sec/60.0);
-    return std::to_string(this->return_min)+":"+std::to_string(this->return_sec);
 }
 
-//Pneumatics Wrapper
-PneumaticsWrapper::PneumaticsWrapper(int adi_port, int smart_port){
-    this->adi_port = adi_port;
-    this->smart_port = smart_port;
-    this->current_state = false;
+bool ScreenButton::toggled(){
+    return this->toggle;
 }
 
-bool PneumaticsWrapper::set_value(pneu_states possibilities){
-    pros::ADIDigitalOut({this->smart_port,this->adi_port},0).set_value(possibilities);
-    this->current_state = possibilities;
-    return this->current_state;
+void ScreenButton::change(bool value){
+    if (this->toggle!=value){
+        this->toggle=value;
+        if (this->enable){this->draw_button();}
+    }
 }
 
-bool PneumaticsWrapper::set_value(bool possibilities){
-    pros::ADIDigitalOut({this->smart_port,this->adi_port},0).set_value(possibilities);
-    this->current_state = possibilities;
-    return this->current_state;
+void ScreenButton::poll(int touch_x, int touch_y){
+    //The reason for using parameters rather than
+    //accessing the touch data directly is that
+    //accessing the data only once is faster 
+
+    if (this->enable){
+        if (touch_x >= this->x and touch_x <= this->x+this->length
+         and touch_y >= this->y and touch_y <= this->y+this->height){
+            this->toggle = !this->toggle;
+            this->draw_button();
+        }
+    }
 }
 
-bool PneumaticsWrapper::swap_state(){
-    pros::ADIDigitalOut({this->smart_port,this->adi_port},0).set_value(!this->current_state);
-    this->current_state = !this->current_state;
-    return this->current_state;
+void ScreenButton::enabled(bool enable){
+    //Enable whenever you want button to 
+    //display and allow touch, and
+    //disable otherwise
+    this->enable=enable;
+    this->draw_button();
 }

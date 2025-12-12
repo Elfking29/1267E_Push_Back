@@ -1,13 +1,18 @@
 #include "main.h"
+#include "pros/misc.h"
 #include <random>
 
 void opcontrol() {
+	competition_initialize();
+	logo();
 	// Define opcontrol variables and pre-opcontrol code here
 	uint32_t sleep_time = millis();
+	int count=0;
 
 	bool tube_lock=false;
 	bool lift_lock=false;
-	bool lift_state=false;
+	int sort_lock=0;
+	double current_color;
 
 	//Brake Types
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
@@ -18,12 +23,12 @@ void opcontrol() {
 	colory.set_led_pwm(100);
 	tube_piston.retract();
 
-	int color=10;
+	int hue[] = {5,220}; //Red, Blue
+
 	
 	// Active opcontrol code
 	while (true){
-
-		
+	
 		// Drive code
 		int deadzone=5;
 		int leftX = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X),deadzone);
@@ -113,20 +118,39 @@ void opcontrol() {
 		if (button_l2 and !lift_lock){
 			lift_piston.toggle();
 			lift_lock=true;
-			lift_state=!lift_state;
+			if (!lift_piston.is_extended()){sort_lock=1;}
+			else if (sort_lock!=2){sort_lock=0;}
 		}
 		else if (!button_l2){lift_lock=false;}
 
-		//Color Sorting - IGNORE FOR NOW
-		/*if (1==1){
-			if (within(colory.get_hue(),220-color,10)){
+		//Color Sorting
+
+		//This part manually disables color sorting
+		if (Con1.get_digital_new_press(DIGITAL_DOWN)){
+			if (sort_lock!=1){
+				sort_lock = 2-sort_lock;
+			}
+		}
+
+		current_color = colory.get_hue();
+		if (1==1){
+			if (within(current_color,hue[color],10)){
+				lift_piston.extend();
+			}
+			else if (within(current_color,hue[1-color],10)){
 				lift_piston.retract();
 			}
-			else {lift_piston.extend();}
-		}
-		pros::screen::print(TEXT_LARGE,2,"%f",colory.get_hue());*/
-		 
+		}		
+		
+		//Printing
+		if (!count%20){Con1.print(0, 0, "Line 1");count=0;}
+		else if (!count%15){Con1.print(0, 0, "Bat:%d Con:%d",pros::battery::get_capacity(),Con1.get_battery_capacity());}
+		else if (!count%10){Con1.print(0, 0, "Line 1");}
+		else if (!count%5){}//Could do Rumble here
+
+
 		//10 msec loop
 		pros::Task::delay_until(&sleep_time, 10);
+		count++;
 	}
 }

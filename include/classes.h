@@ -1,23 +1,3 @@
-//Use multiple inertial sensors
-class MultiIMU{
-    private:
-        pros::Imu imu_one;
-        pros::Imu imu_two;
-        pros::Imu imu_three;
-    public:
-        MultiIMU(int port_one,int port_two,int port_three);
-        void calibrate();
-        void reset();
-        float one_data_point(float value_one, float value_two, float value_three);
-        float get_rotation();
-        float get_heading();
-        void tare_rotation();
-        void tare_heading();
-        void set_heading(int heading);
-        void set_rotation(int rotation);
-
-};
-
 //PID Loops for Drivetrain
 class DrivePID{
     private:
@@ -77,47 +57,26 @@ class DrivePID{
         void q_go(double distangle, bool turn=0, int wait=0);
 };
 
-//Smart Controller Printing
-class SmartCon{
+//On-Screen Buttons
+class ScreenButton{
     private:
-    std::string first_check;
-    std::string second_check;
-    std::string third_check;
-    std::string return_string;
-    int return_num;
-    int line;
-    bool debug;
-    int raw_ticks;
-    int raw_sec;
-    int total_time;
-    int return_min;
-    int return_sec;
+        int x;
+        int y;
+        int length;
+        int height;
+        int color_one;
+        int color_two;
+        bool toggle;
+        bool enable;
+        std::string str_one;
+        std::string str_two;
+        int border_one;
+        int border_two;
+        void draw_button();
     public:
-    SmartCon(int total_time);
-    std::tuple<int,std::string> print(std::string line_one, std::string line_two, std::string line_three, std::string rumble, std::tuple<int,int,int> order); 
-    std::string get_time();
-};
-
-
-//Pneumatics Wrapper
-class PneumaticsWrapper{
-    private:
-        int adi_port;
-        int smart_port;
-        bool current_state;
-        enum pneu_states{
-            off = 0,
-            disabled = 0,
-            retracted = 0,
-            on = 1,
-            enabled = 1,
-            expanded = 1,
-        };
-    public:
-        PneumaticsWrapper(int adi_port, int smart_port = 22);
-        //This requires a function overload because you can't
-        //have an int (really a real bool) as the name part of an enum
-        bool set_value(pneu_states possibilities);
-        bool set_value(bool possibilities);
-        bool swap_state();      
+        ScreenButton(int x, int y, int length, int width, int color_one, int color_two, std::string str_one, std::string str_two, int border_one=0x000000, int border_two=0xFFFFFF, bool toggled = 0);
+        bool toggled();
+        void change(bool value);
+        void poll(int touch_x, int touch_y);
+        void enabled(bool enable);
 };
