@@ -1,4 +1,5 @@
 #include "main.h"
+#include <cmath>
 //All classes need to be defined & externed in this and the .h file
 //Use multiple inertial sensors
 MultiIMU::MultiIMU(int port_one, int port_two, int port_three):
@@ -126,7 +127,7 @@ void DrivePID::prepare(double distangle, bool turn, bool rev){
         //gear ratio (motor/wheel)
     }
     else {
-        this->target=(distangle+imu.get_rotation())*1;//color_value;
+        this->target=(distangle+imu.get_rotation())*(1-2*color);
     }
     //Set correct k constants
     this->kp=this->turn==0?this->kp_fb:this->kp_tu;
@@ -192,6 +193,9 @@ void DrivePID::hmove(double distance){
         this->l_motor=this->l_add;
         this->r_motor=this->r_add;
     }
+    int max=64;
+    l_motor=fabs(l_motor)<max?l_motor:get_sign(l_motor)*max;
+    r_motor=fabs(r_motor)<max?r_motor:get_sign(r_motor)*max;
     move_drive_motors(this->l_motor,this->r_motor);
     //Check if loop is done
     //R
@@ -244,6 +248,9 @@ void DrivePID::hturn(double angle){
         this->l_motor=this->l_add;
         this->r_motor=-this->l_add;
     }
+    int max=50;
+    l_motor=fabs(l_motor)<max?l_motor:get_sign(l_motor)*max;
+    r_motor=fabs(r_motor)<max?r_motor:get_sign(r_motor)*max;
     move_drive_motors(this->l_motor,this->r_motor);
     //Check if loop is done    
     //R

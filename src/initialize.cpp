@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string>
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -20,20 +21,30 @@ void initialize() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-
+int auto_select = 0;
  void competition_initialize() {
-	int auto_select = 0;
+	std::string str;
     bool lock = false;
-    screen::print(pros::E_TEXT_MEDIUM,2,"0");
 	while (1==1){
 		if (auto_selector.get_value() and !lock){
             lock=true;
 			auto_select+=1;
 			auto_select%=4;
-			screen::print(pros::E_TEXT_MEDIUM,2,"%d",auto_select);
-            pros::Task::delay(10); //Delay before repeat
+			switch (auto_select){
+				case 0:
+					str="High 3";break;
+				case 1:
+					str="Low 3";break;
+				case 2:
+					str="High 1";break;
+				case 3:
+					str="Low 1";break;
+			}
+			screen::print(pros::E_TEXT_MEDIUM,2,"%s",str);
 		}
         else if (!auto_selector.get_value()){lock=false;}
+		pros::Task::delay(10); //Delay before repeat
+		color = auto_select%2;	
 	}
 }
 
@@ -51,5 +62,6 @@ void initialize() {
  * from where it left off.
  */
 void autonomous() {
-    high_auton();
+    if (auto_select<2){high_auton();}
+	else {low_auton();}
 }

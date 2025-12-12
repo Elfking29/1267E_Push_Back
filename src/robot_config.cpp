@@ -34,4 +34,7 @@ pros::adi::Pneumatics lift_piston('f', false);
 adi::DigitalIn auto_selector('d');
 pros::Imu imu(16);
 pros::Rotation vertical_encoder(-21);
-pros::Optical colory(16); //Red ~10, Blue ~210, Default ~40
+pros::Optical colory(5); //Red ~10, Blue ~210, Default ~40
+
+//Variables
+bool color;

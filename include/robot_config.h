@@ -27,3 +27,6 @@ extern adi::DigitalIn auto_selector;
 extern pros::Imu imu;
 extern pros::Rotation vertical_encoder;
 extern pros::Optical colory;
+
+//Variables
+extern bool color;

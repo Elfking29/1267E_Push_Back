@@ -61,26 +61,53 @@ void opcontrol() {
 		int button_r2 = Con1.get_digital(E_CONTROLLER_DIGITAL_R2); // Scoring reverse
 		// End Buttons
 
-		//Full Intake
-		if (button_r1){
-			Intake.move(127);
-			Cover.move(127);
+		//Intake
+		if (!button_a && !button_b){
+			if (button_r1){
+				Intake.move(127);
+				Cover.move(127);
+			}
+			else if (button_r2){
+				Intake.move(-127);
+				Cover.move(-127);
+			}
+			else{
+				if (button_l1){
+					Intake.move(127);
+				}
+				else{Intake.brake();}
+				Cover.brake();
+			}
 		}
-		else if (button_r2){
-			Intake.move(-127);
-			Cover.move(-127);
-		}
-		else{
-			Intake.brake();
-			Cover.brake();
+		else {
+			if (button_a){
+				if (button_r1){
+					Intake.move(127);
+				}
+				else{Intake.brake();}
+				if (button_r2){
+					Cover.move(127);
+				}
+				else{Cover.brake();}
+			}
+			else if (button_b){
+				if (button_r1){
+					Intake.move(-127);
+				}
+				else{Intake.brake();}
+				if (button_r2){
+					Cover.move(-127);
+				}
+				else{Cover.brake();}
+			}
 		}
 
 		//Tube Collector
-		if (button_l1 and !tube_lock){
+		if (button_up and !tube_lock){
 			tube_piston.toggle();
 			tube_lock=true;
 		}
-		else if (!button_l1){tube_lock=false;}
+		else if (!button_up){tube_lock=false;}
 
 		//High/Low Switcher
 		if (button_l2 and !lift_lock){
