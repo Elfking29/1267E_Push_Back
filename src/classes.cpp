@@ -20,7 +20,7 @@ DrivePID::DrivePID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double k
     this->roe=0;
 
     //R
-    this->s=5;
+    this->s=500;
     //R
 }
 
@@ -28,7 +28,7 @@ void DrivePID::prepare(double distangle, bool turn, bool rev){
     imu.tare_rotation();
     this->turn=turn;
     this->finish = false;
-    this->breakpoint=!this->turn?30:2.5;
+    this->breakpoint=!this->turn?30:1.5;
     this->minimum=!this->turn?35:35;
     if (this->turn == false){
         this->target = (360*distangle*60)/(3.25*3.1416*36);
@@ -160,7 +160,7 @@ void DrivePID::hturn(double angle){
         this->l_motor=this->l_add;
         this->r_motor=-this->l_add;
     }
-    int max=50;
+    int max=40;
     l_motor=fabs(l_motor)<max?l_motor:get_sign(l_motor)*max;
     r_motor=fabs(r_motor)<max?r_motor:get_sign(r_motor)*max;
     move_drive_motors(this->l_motor,this->r_motor);

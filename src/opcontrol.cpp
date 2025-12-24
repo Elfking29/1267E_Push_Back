@@ -3,7 +3,6 @@
 #include <random>
 
 void opcontrol() {
-	competition_initialize();
 	logo();
 	// Define opcontrol variables and pre-opcontrol code here
 	uint32_t sleep_time = millis();
@@ -19,11 +18,11 @@ void opcontrol() {
 	Cover.set_brake_mode(MOTOR_BRAKE_COAST);
 
 	//Set Default States
-	lift_piston.extend();
+	//lift_piston.extend();
 	colory.set_led_pwm(100);
 	tube_piston.retract();
 
-	int hue[] = {5,220}; //Red, Blue
+	int hue[] = {220,5}; //Blue, Red
 
 	
 	// Active opcontrol code

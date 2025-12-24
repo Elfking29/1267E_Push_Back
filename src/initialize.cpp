@@ -40,6 +40,7 @@ ScreenButton bonk_butn(250,155,220,55,0x004e38,0x004e38,"Bonk", "Bonk");
 
 // competition_initaialize is the same as pre_auton.
 void competition_initialize() {
+	colory.set_led_pwm(100);
     //Initalize Buttons
 	delay(3000);
     color_type.enabled(true);
@@ -169,7 +170,7 @@ void autonomous() {
 		case 1:
 			high_auton(); break;
 		case 2:
-			low_auton(); break;
+			high_auton(); break;
 		case 3:
 			break; //Nothing Yet
 	}
