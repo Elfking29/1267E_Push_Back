@@ -166,7 +166,7 @@ void autonomous() {
 	logo();
 	switch (auto_select){
 		case 0:
-			break; //Skills
+			low_auton(); break; //Skills
 		case 1:
 			high_auton(); break;
 		case 2:

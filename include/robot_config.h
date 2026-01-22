@@ -15,7 +15,8 @@ extern Motor BR;
 
 // Intake + Scoring Motors
 extern Motor Intake;
-extern Motor Cover;
+extern Motor Middle;
+extern Motor Switcher;
 
 // Pneumatics 
 extern pros::adi::Pneumatics tube_piston;

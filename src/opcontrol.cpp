@@ -15,7 +15,8 @@ void opcontrol() {
 
 	//Brake Types
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
-	Cover.set_brake_mode(MOTOR_BRAKE_COAST);
+	Middle.set_brake_mode(MOTOR_BRAKE_COAST);
+	Switcher.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	//Set Default States
 	//lift_piston.extend();
@@ -30,13 +31,13 @@ void opcontrol() {
 	
 		// Drive code
 		int deadzone=5;
-		int leftX = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X),deadzone);
+		int leftX = 0.5*joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X),deadzone);
 		int leftY = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),deadzone);
 		int rightX = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),deadzone);
 		int rightY = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y),deadzone);
 
-		int leftVal = rightY+leftY+leftX;
-		int rightVal = rightY+leftY-leftX;
+		int leftVal = -rightY-leftY+leftX;
+		int rightVal = -rightY-leftY-leftX;
 
 		// currently set split arcade
 		FL.move(leftVal);
@@ -66,45 +67,30 @@ void opcontrol() {
 		// End Buttons
 
 		//Intake
-		if (!button_a && !button_b){
 			if (button_r1){
 				Intake.move(127);
-				Cover.move(127);
+				Middle.move(127);
 			}
 			else if (button_r2){
 				Intake.move(-127);
-				Cover.move(-127);
+				Middle.move(-127);
 			}
-			else{
-				if (button_l1){
-					Intake.move(127);
-				}
-				else{Intake.brake();}
-				Cover.brake();
+			else {
+				Intake.brake();
+				Middle.brake();
 			}
-		}
-		else {
-			if (button_a){
-				if (button_r1){
-					Intake.move(127);
-				}
-				else{Intake.brake();}
-				if (button_r2){
-					Cover.move(127);
-				}
-				else{Cover.brake();}
+
+			if (button_l1){
+				Switcher.move(127);
 			}
-			else if (button_b){
-				if (button_r1){
-					Intake.move(-127);
-				}
-				else{Intake.brake();}
-				if (button_r2){
-					Cover.move(-127);
-				}
-				else{Cover.brake();}
+			else if (button_l2){
+				Switcher.move(-127);
 			}
-		}
+			else {
+				Switcher.brake();
+			}
+		
+			
 
 		//Tube Collector
 		if (button_up and !tube_lock){
