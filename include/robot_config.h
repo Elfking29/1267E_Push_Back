@@ -15,19 +15,16 @@ extern Motor BR;
 
 // Intake + Scoring Motors
 extern Motor Intake;
-extern Motor Middle;
-extern Motor Switcher;
+extern Motor Cover;
 
 // Pneumatics 
-extern pros::adi::Pneumatics tube_piston;
-extern pros::adi::Pneumatics lift_piston;
+extern pros::adi::Pneumatics antler_l;
+extern pros::adi::Pneumatics antler_r;
 
 // Sensors
-
 extern adi::DigitalIn auto_selector;
 extern pros::Imu imu;
 extern pros::Rotation vertical_encoder;
-extern pros::Optical colory;
 
 //Variables
 extern bool color;
