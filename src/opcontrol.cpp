@@ -16,7 +16,6 @@ void opcontrol() {
 	//Brake Types
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
 	Middle.set_brake_mode(MOTOR_BRAKE_COAST);
-	Switcher.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	//Set Default States
 	//lift_piston.extend();
@@ -81,15 +80,7 @@ void opcontrol() {
 				Middle.brake();
 			}
 
-			if (button_l1){
-				Switcher.move(127);
-			}
-			else if (button_l2){
-				Switcher.move(-127);
-			}
-			else {
-				Switcher.brake();
-			}
+
 		
 			
 
@@ -102,13 +93,7 @@ void opcontrol() {
 		else if (!button_a){antler_lock=false;}
 
 		//High/Low Switcher
-		if (button_l2 and !lift_lock){
-			lift_piston.toggle();
-			lift_lock=true;
-			if (!lift_piston.is_extended()){sort_lock=1;}
-			else if (sort_lock!=2){sort_lock=0;}
-		}
-		else if (!button_l2){lift_lock=false;}
+
 
 
 		//Color Sorting
