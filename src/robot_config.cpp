@@ -11,27 +11,29 @@ pros::Controller Con1(pros::E_CONTROLLER_MASTER);
 // NOTE: negative port number for reverse
 
 // port numbers are placeholders
-Motor FL (-17,v5::MotorGears::blue);
-Motor ML (-18,v5::MotorGears::blue);
-Motor BL (-20,v5::MotorGears::blue);
+Motor FL (-14,v5::MotorGears::blue);
+Motor ML (-15,v5::MotorGears::blue);
+Motor BL (-16,v5::MotorGears::blue);
 
-Motor FR (8,v5::MotorGears::blue);
-Motor MR (9,v5::MotorGears::blue);
-Motor BR (10,v5::MotorGears::blue);
+Motor FR (11,v5::MotorGears::blue);
+Motor MR (12,v5::MotorGears::blue);
+Motor BR (13,v5::MotorGears::blue);
 
 // Intake + Scoring Motors
 
 // also placeholder port numbers
-Motor Intake (-3,v5::MotorGears::blue);
-Motor Cover (-12,v5::MotorGears::blue);
+Motor Intake (-5,v5::MotorGears::green);
+Motor Middle (-21,v5::MotorGears::green);
+Motor Top (-4,v5::MotorGears::green);
 
 // Pneumatics 
-pros::adi::Pneumatics antler_l('a', false); 
-pros::adi::Pneumatics antler_r('b', false); 
+pros::adi::Pneumatics antler_l('f', false); 
+pros::adi::Pneumatics antler_r('e', false); 
+pros::adi::Pneumatics loader('g', false);
+pros::adi::Pneumatics backer('h', true);
 
 // Sensors
 pros::Imu imu(16);
-pros::Rotation vertical_encoder(-21);
 
 
 //Variables

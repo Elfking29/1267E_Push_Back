@@ -8,7 +8,7 @@ void opcontrol() {
 	uint32_t sleep_time = millis();
 	int count=0;
 
-	bool tube_lock=false;
+	bool antler_lock=false;
 	bool lift_lock=false;
 	int sort_lock=0;
 	double current_color;
@@ -20,8 +20,9 @@ void opcontrol() {
 
 	//Set Default States
 	//lift_piston.extend();
-	colory.set_led_pwm(100);
-	tube_piston.retract();
+	loader.retract();
+	backer.extend();
+
 
 	int hue[] = {220,5}; //Blue, Red
 
@@ -92,12 +93,13 @@ void opcontrol() {
 		
 			
 
-		//Tube Collector
-		if (button_up and !tube_lock){
-			tube_piston.toggle();
-			tube_lock=true;
+		//Antler extension toggler
+		if (button_a and !antler_lock){
+			antler_l.toggle();
+			antler_r.toggle();
+			antler_lock=true;
 		}
-		else if (!button_up){tube_lock=false;}
+		else if (!button_a){antler_lock=false;}
 
 		//High/Low Switcher
 		if (button_l2 and !lift_lock){
@@ -108,24 +110,14 @@ void opcontrol() {
 		}
 		else if (!button_l2){lift_lock=false;}
 
-		//Color Sorting
 
+		//Color Sorting
 		//This part manually toggles color sorting
 		if (Con1.get_digital_new_press(DIGITAL_DOWN)){
-			if (sort_lock!=1){
-				sort_lock = 2-sort_lock;
-			}
+			loader.toggle();
+			backer.toggle();
 		}
-
-		current_color = colory.get_hue();
-		if (!sort_lock){
-			if (within(current_color,hue[color],10)){
-				lift_piston.extend();
-			}
-			else if (within(current_color,hue[1-color],10)){
-				lift_piston.retract();
-			}
-		}		
+	
 		
 		//Printing
 		if (!count%20){Con1.print(0, 0, "Sort 0-ON: %d",sort_lock);count=0;}
