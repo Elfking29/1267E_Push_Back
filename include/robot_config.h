@@ -22,11 +22,11 @@ extern Motor Top;
 extern pros::adi::Pneumatics antler_l;
 extern pros::adi::Pneumatics antler_r;
 extern pros::adi::Pneumatics loader;
-extern pros::adi::Pneumatics backer;
+extern pros::adi::Pneumatics triangle;
 
 // Sensors
-extern adi::DigitalIn auto_selector;
 extern pros::Imu imu;
+extern adi::DigitalIn load_button;
 
 //Variables
 extern bool color;

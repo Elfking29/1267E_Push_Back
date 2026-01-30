@@ -217,7 +217,7 @@ void DrivePID::timeout(int wait){
     }
 }
 
-void DrivePID::q_go(double distangle, bool turn, int t){
+void DrivePID::q_go(double distangle, bool  , int t){
     this->prepare(distangle,turn);
     while (!this->is_finished()){
         this->go();

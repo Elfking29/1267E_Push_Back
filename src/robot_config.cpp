@@ -22,18 +22,19 @@ Motor BR (13,v5::MotorGears::blue);
 // Intake + Scoring Motors
 
 // also placeholder port numbers
-Motor Intake (-5,v5::MotorGears::green);
-Motor Middle (-21,v5::MotorGears::green);
+Motor Intake (5,v5::MotorGears::green);
+Motor Middle (21,v5::MotorGears::green);
 Motor Top (-4,v5::MotorGears::green);
 
 // Pneumatics 
 pros::adi::Pneumatics antler_l('f', false); 
 pros::adi::Pneumatics antler_r('e', false); 
 pros::adi::Pneumatics loader('g', false);
-pros::adi::Pneumatics backer('h', true);
+pros::adi::Pneumatics triangle('h', true);
 
 // Sensors
 pros::Imu imu(16);
+pros::adi::DigitalIn load_button ('d');
 
 
 //Variables
