@@ -1,9 +1,11 @@
 #include "main.h"
 #include "pros/misc.h"
 #include "pros/motors.h"
-#include <random>
 
 void opcontrol() {
+	//delay(3000);
+	//low_auton();
+	//while (1==1){}
 	logo();
 	// Define opcontrol variables and pre-opcontrol code here
 	uint32_t sleep_time = millis();
@@ -13,7 +15,7 @@ void opcontrol() {
 	//Brake Types
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
 	Middle.set_brake_mode(MOTOR_BRAKE_COAST);
-	Top.set_brake_mode(MOTOR_BRAKE_HOLD);
+	Top.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	//Set Default States
 	//lift_piston.extend();
@@ -28,7 +30,7 @@ void opcontrol() {
 	while (true){
 	
 		// Drive code
-		int deadzone=5;
+		int deadzone=10;
 		int leftX = 0.5*joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X),deadzone);
 		int leftY = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),deadzone);
 		int rightX = joystick_math(Con1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),deadzone);
@@ -103,7 +105,8 @@ void opcontrol() {
 	
 		
 		//Printing
-		if (!count%20){Con1.print(0, 0, "Sort 0-ON: %d",4);count=0;}
+		screen::print(TEXT_LARGE,0,"%i",leftX);
+		if (!count%20){Con1.print(0, 0, "%i",leftX);count=0;}
 		else if (!count%15){Con1.print(1, 0, "Bat:%d Con:%d",pros::battery::get_capacity(),Con1.get_battery_capacity());}
 		else if (!count%10){}//Con1.print(2, 0, "Line 3");}
 		else if (!count%5){}//Could do Rumble here

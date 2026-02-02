@@ -39,6 +39,7 @@
 #include "functions.h"
 #include "autons.h"
 #include "classes.h"
+#include "pid.h"
 
 /**
  * You should add more #includes here

@@ -5,8 +5,8 @@ int joystick_math(int joystick_value, int deadzone){
         return 0;
     }
     else {
-        //return get_sign(joystick_value)*pow(std::abs(joystick_value)/49,5);
-        return joystick_value;
+        return get_sign(joystick_value)*(powf(std::fabs(joystick_value)/50,5)+20);
+        //return joystick_value;
     }
 }
 
