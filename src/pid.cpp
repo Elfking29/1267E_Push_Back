@@ -15,7 +15,7 @@ PID::PID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,doubl
 
     this->finish=false;
     this->dt=dt;
-    this->ratio=600/360.0;
+    this->ratio=300/180.0;
     this->minimum=20;
     this->fb_max=90;
     this->tu_max=60;
