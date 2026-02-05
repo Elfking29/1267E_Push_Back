@@ -1,10 +1,9 @@
 #include "main.h"
 
 void high_auton(){
-    DrivePID drive(0.4,0,0.1,1.1,0,0.7);
-    drive.q_go(32.5);
+    Con1.clear();
+    PID drive(0.4,0,0.1,1.1,0,0.7);
+    drive.go(-12,0);
     delay(250);
-    drive.q_go(-80,1);
-    delay(250);
-    drive.q_go(-22);
+    drive.go(90,1);
 }

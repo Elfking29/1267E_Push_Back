@@ -1,51 +1,19 @@
 #include "main.h"
+#include "pros/adi.h"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/screen.hpp"
+#include <cstdio>
 
 void opcontrol() {
 
 	//Test
 
+	Con1.clear();
 	imu.reset(true);
-	delay(3000);
-	imu.tare_rotation();
-	FL.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    ML.set_encoder_units(MOTOR_ENCODER_DEGREES);
-	BL.set_encoder_units(MOTOR_ENCODER_DEGREES);
-	FR.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    MR.set_encoder_units(MOTOR_ENCODER_DEGREES);
-	BR.set_encoder_units(MOTOR_ENCODER_DEGREES);
-
-	//Set motor position to 0
-	FL.tare_position();
-    ML.tare_position();
-	BL.tare_position();
-	FR.tare_position();
-    MR.tare_position();
-	BR.tare_position();
-	screen::set_eraser(0x000000);
-	int v=18;
-	while ((int)imu.get_rotation()!=180){
-		if ((int)imu.get_rotation()<180){
-			move_drive_motors(v, -v);
-		}
-		else {
-			move_drive_motors(-v, v);
-		}
-		screen::erase();
-		screen::print(E_TEXT_MEDIUM,0,"%i",(int)imu.get_rotation());
-		screen::print(E_TEXT_MEDIUM,1,"%i",(int)FL.get_position());
-		screen::print(E_TEXT_MEDIUM,2,"%i",(int)ML.get_position());
-		screen::print(E_TEXT_MEDIUM,3,"%i",(int)BL.get_position());
-		screen::print(E_TEXT_MEDIUM,4,"%i",(int)FR.get_position());
-		screen::print(E_TEXT_MEDIUM,5,"%i",(int)MR.get_position());
-		screen::print(E_TEXT_MEDIUM,6,"%i",(int)BR.get_position());
-		delay(10);
-	}
-	screen::print(E_TEXT_MEDIUM,7,"Done");
+	high_auton();
+	Top.move(1227);;
 	while (1==1){}
-	//low_auton();
 
 	//End Test
 

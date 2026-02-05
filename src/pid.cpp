@@ -1,6 +1,9 @@
 #include "main.h"
 #include "pros/rtos.h"
+#include "pros/screen.h"
+#include "pros/screen.hpp"
 #include <cmath>
+#include <cstdint>
 #include <stdexcept>
 #include <utility>
 
@@ -13,14 +16,13 @@ PID::PID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,doubl
     this->ki_tu = ki_tu;
     this->kd_tu = kd_tu;
 
-    this->finish=false;
     this->dt=dt;
-    this->ratio=300/180.0;
-    this->minimum=20;
-    this->fb_max=90;
+    this->ratio=1035/180.0;
+    this->minimum=15;
+    this->fb_max=60;
     this->tu_max=60;
     this->settle=3;
-    this->e_break=10;
+    this->e_break=5;
     this->a_break=2;
 }
 
@@ -60,6 +62,8 @@ void PID::set_finished(){
         BR.brake();
         ML.brake();
         MR.brake();
+
+        delay(250);
 }
 
 void PID::go(double distangle, bool turn, int timeout){
@@ -77,93 +81,97 @@ void PID::go(double distangle, bool turn, int timeout){
         target = distangle*this->ratio*hiloi;
         arget = (distangle+imu.get_rotation())*hiloi;
     }
-    double loe,roe,aoe,li,ri,l_motor,r_motor,a_motor=0;
-
+    double loe,roe,aoe,lp,rp,ap,li,ri,ai,ld,rd,ad,l_motor,r_motor,a_motor,e_motor,l_encode,r_encode=0;
+    bool finish=false;
     this->tare_prepare();
-    double time,start=millis();
+    uint32_t time,start=millis();
 
     //Actual Loop
-    while (!this->finish){
+    while (!finish){
         if (!turn){
             //Forwards and Backwards
-            double l_encode = (FL.get_position()+ML.get_position()+BL.get_position())/3.0;
-            double r_encode = (FR.get_position()+MR.get_position()+BR.get_position())/3.0;
+            l_encode = (FL.get_position()+ML.get_position()+BL.get_position())/3.0;
+            r_encode = (FR.get_position()+MR.get_position()+BR.get_position())/3.0;
             //This averages all three motors, which is more accurate
             //Error for both sides
-            double l_error = target-l_encode;
-            double r_error = target-r_encode;
+            l_error = target-l_encode;
+            r_error = target-r_encode;
             //Proportional for both sides
-            double lp = this->kp_fb*l_error;
-            double rp = this->kp_fb*r_error;
+            lp = this->kp_fb*l_error;
+            rp = this->kp_fb*r_error;
             //Integral for both sides
             float arb_num = 100;
-            double li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
-            double ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
+            li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
+            ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
             //Derivative for both sides
-            double ld = this->kd_fb*(l_error-loe)/dt;
-            double rd = this->kd_fb*(r_error-roe)/dt;
+            ld = this->kd_fb*(l_error-loe)/dt;
+            rd = this->kd_fb*(r_error-roe)/dt;
             //Set previous error to error
-            double loe = l_error;
-            double roe = r_error;
+            loe = l_error;
+            roe = r_error;
             //Value before max and min
-            double l_motor = lp+li+ld;
-            double r_motor = rp+ri+rd;
+            l_motor = lp+li+ld;
+            r_motor = rp+ri+rd;
             //Bound the values
-            if (std::fabs(l_motor)>this->fb_max){l_motor=this->fb_max*hiloi;}
-            else if (std::fabs(l_motor)<this->minimum){l_motor=this->minimum*hiloi;}
+            if (std::fabs(l_motor)>this->fb_max){l_motor=this->fb_max*get_sign(l_motor);}
+            else if (std::fabs(l_motor)<this->minimum){l_motor=this->minimum*get_sign(l_motor);}
 
-            if (std::fabs(r_motor)>this->fb_max){r_motor=this->fb_max*hiloi;}
-            else if (std::fabs(r_motor)<this->minimum){r_motor=this->minimum*hiloi;}
+            if (std::fabs(r_motor)>this->fb_max){r_motor=this->fb_max*get_sign(r_motor);}
+            else if (std::fabs(r_motor)<this->minimum){r_motor=this->minimum*get_sign(r_motor);}
         }
         else {
             //Turning
 
             //Angle Math
-            double a_error=10*(target-imu.get_rotation()); 
-            double ap = this->kp_tu*a_error;
+            //This isn't accurate right now for some reason
+            a_error=10*(arget-imu.get_rotation()); 
+            ap = this->kp_tu*a_error;
             float arb_num = 100;
-            double ai = a_error>std::abs(arb_num)?0:a_error==0?0:this->ki_tu*(li+this->dt*a_error);
-            double ad = this->kd_tu*(a_error-aoe)/this->dt;
+            ai = a_error>std::abs(arb_num)?0:a_error==0?0:this->ki_tu*(li+this->dt*a_error);
+            ad = this->kd_tu*(a_error-aoe)/this->dt;
             aoe = a_error;
             a_motor = ap+ai+ad;
-            if (std::fabs(a_motor)>this->tu_max){a_motor=this->tu_max*hiloi;}
-            else if (std::fabs(a_motor)<this->minimum){a_motor=this->minimum*hiloi;}
+            if (std::fabs(a_motor)>this->tu_max){a_motor=this->tu_max*get_sign(a_motor);}
+            else if (std::fabs(a_motor)<this->minimum){a_motor=this->minimum*get_sign(a_motor);}
 
             //Encoder Math
-            double l_encode = (FL.get_position()+ML.get_position()+BL.get_position())/3.0;
-            double r_encode = -(FR.get_position()+MR.get_position()+BR.get_position())/3.0;
-            double l_error = target-l_encode;
-            double r_error = target-r_encode;
-            double lp = this->kp_fb*l_error;
-            double rp = this->kp_fb*r_error;
-            double li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
-            double ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
-            double ld = this->kd_fb*(l_error-loe)/dt;
-            double rd = this->kd_fb*(r_error-roe)/dt;
-            double loe = l_error;
-            double roe = r_error;
-            double e_motor = (lp+li+ld+rp+ri+rd)/2.0;
-            if (std::fabs(e_motor)>this->tu_max){e_motor=this->tu_max*hiloi;}
-            else if (std::fabs(e_motor)<this->minimum){e_motor=this->minimum*hiloi;}
+
+
+            l_encode = (FL.get_position()+ML.get_position()+BL.get_position())/3.0;
+            r_encode = -(FR.get_position()+MR.get_position()+BR.get_position())/3.0;
+            l_error = target-l_encode;
+            r_error = target-r_encode;
+            lp = this->kp_fb*l_error;
+            rp = this->kp_fb*r_error;
+            li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
+            ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
+            ld = this->kd_fb*(l_error-loe)/dt;
+            rd = this->kd_fb*(r_error-roe)/dt;
+            loe = l_error;
+            roe = r_error;
+            e_motor = (lp+li+ld+rp+ri+rd)/2.0;
+            if (std::fabs(e_motor)>this->tu_max){e_motor=this->tu_max*get_sign(e_motor);}
+            else if (std::fabs(e_motor)<this->minimum){e_motor=this->minimum*get_sign(e_motor);}
 
             //Combine the 2
-            double l_motor=(a_motor+e_motor)/2;
-            double r_motor=-l_motor;
+            l_motor=(e_motor+e_motor)/2;
+            r_motor=-l_motor;
 
         }
 
         move_drive_motors(l_motor, r_motor);
 
         //Breakpoints
-        if (std::fabs(l_error)<=this->e_break && std::fabs(r_error)<=this->e_break){
-            if (!turn || std::fabs(a_error)<=this->a_break){
+        if (std::fabs((l_error+r_error)/2)<=this->e_break){
+            if (!turn || std::fabs(a_error)<=this->a_break || true){
                 if (loops<this->settle){loops++;}
-                else{this->finish=1;}
+                else{finish=1;}
             }
             else{loops=0;}
         }
         else{loops=0;}
-        if (millis()>=start+timeout && timeout!=-1){this->finish=1;}
+        if (millis()>=start+timeout && timeout!=-1){finish=1;}
+        Task::delay_until(&time,this->dt);
     }
     this->set_finished();
 
