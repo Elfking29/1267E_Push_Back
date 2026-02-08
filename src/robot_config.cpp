@@ -30,7 +30,7 @@ Motor Top (-4,v5::MotorGears::green);
 pros::adi::Pneumatics antler_l('f', false); 
 pros::adi::Pneumatics antler_r('e', false); 
 pros::adi::Pneumatics loader('g', false);
-pros::adi::Pneumatics triangle('h', true);
+pros::adi::Pneumatics triangle('h', false);
 
 // Sensors
 pros::Imu imu(3);

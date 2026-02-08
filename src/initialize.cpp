@@ -31,10 +31,10 @@ int auto_select = 0;
 
 //Define Buttons
 ScreenButton color_type(15,15,220,55,0xD22630,0x0077c8,"Red","Blue",0x000000,0x000000);
-ScreenButton auton_side(15,85,220,55,0xCFFF04,0xCFFF04,"High","Low",0x000000,0x000000);
+ScreenButton auton_side(15,85,220,55,0xCFFF04,0xCFFF04,"NA","NA",0x000000,0x000000);
 ScreenButton skills_tst(15,155,220,55,0xD29DF8,0xD29DF8,"Skills","Skills");
-ScreenButton high_butn(250,15,220,55,0x004e38,0x004e38,"Three","Three");
-ScreenButton low_butn(250,85,220,55,0x004e38,0x004e38,"One","One",0x000000,0xFFFFFF,1);
+ScreenButton high_butn(250,15,220,55,0x004e38,0x004e38,"High","High");
+ScreenButton low_butn(250,85,220,55,0x004e38,0x004e38,"Low","Low",0x000000,0xFFFFFF,1);
 ScreenButton bonk_butn(250,155,220,55,0x004e38,0x004e38,"Bonk", "Bonk");
 
 // competition_initaialize is the same as pre_auton.
@@ -99,7 +99,7 @@ void competition_initialize() {
         }
 
         color=color_type.toggled();
-        hilo=auton_side.toggled();
+        hilo=high_butn.toggled();
 
 		if (!auto_select){str="Skills";}
 		else if (auto_select==1){
@@ -164,11 +164,11 @@ void autonomous() {
 	logo();
 	switch (auto_select){
 		case 0:
-			low_auton(); break; //Skills
+			 Top.move(127); delay(250); Top.move(0); break //Skills
 		case 1:
 			high_auton(); break;
 		case 2:
-			high_auton(); break;
+			low_auton(); break;
 		case 3:
 			break; //Nothing Yet
 	}

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/abstract_motor.hpp"
 #include "pros/adi.h"
 #include "pros/misc.h"
 #include "pros/motors.h"
@@ -6,27 +7,17 @@
 #include <cstdio>
 
 void opcontrol() {
-
-	//Test
-
-	Con1.clear();
-	imu.reset(true);
-	high_auton();
-	Top.move(1227);;
-	while (1==1){}
-
-	//End Test
-
 	logo();
 	// Define opcontrol variables and pre-opcontrol code here
 	uint32_t sleep_time = millis();
 	int count=0;
+	int ic=0;
 
 	double current_color;
 	//Brake Types
 	Intake.set_brake_mode(MOTOR_BRAKE_COAST);
 	Middle.set_brake_mode(MOTOR_BRAKE_COAST);
-	Top.set_brake_mode(MOTOR_BRAKE_BRAKE);
+	Top.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	//Set Default States
 	//lift_piston.extend();
@@ -72,7 +63,7 @@ void opcontrol() {
 				Intake.brake();
 				Middle.brake();
 			}
-			if (Con1.get_digital(E_CONTROLLER_DIGITAL_L1)){
+			if (Con1.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 				Top.move(127);
 			}
 			else if (Con1.get_digital(E_CONTROLLER_DIGITAL_L2)){

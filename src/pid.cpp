@@ -18,11 +18,11 @@ PID::PID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,doubl
 
     this->dt=dt;
     this->ratio=1035/180.0;
-    this->minimum=15;
-    this->fb_max=60;
+    this->minimum=22;
+    this->fb_max=67;
     this->tu_max=60;
     this->settle=3;
-    this->e_break=5;
+    this->e_break=12;
     this->a_break=2;
 }
 
@@ -63,12 +63,11 @@ void PID::set_finished(){
         ML.brake();
         MR.brake();
 
-        delay(250);
+        delay(150);
 }
 
 void PID::go(double distangle, bool turn, int timeout){
     double target,arget,l_error,r_error,a_error;
-    int hiloi = 1-2*hilo;
     int loops=0;
     //Do Math and Prepare
     if (!turn){
@@ -78,8 +77,8 @@ void PID::go(double distangle, bool turn, int timeout){
     }
     else {
         //Turning
-        target = distangle*this->ratio*hiloi;
-        arget = (distangle+imu.get_rotation())*hiloi;
+        target = distangle*this->ratio;
+        arget = (distangle+imu.get_rotation());
     }
     double loe,roe,aoe,lp,rp,ap,li,ri,ai,ld,rd,ad,l_motor,r_motor,a_motor,e_motor,l_encode,r_encode=0;
     bool finish=false;
