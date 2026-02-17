@@ -14,10 +14,12 @@ class PID{
         double ratio;
         int minimum;
         int fb_max;
+        int lw_max;
         int tu_max;
         int settle;
         double e_break;
         double a_break;
+
 
         void tare_prepare();
         void set_finished();

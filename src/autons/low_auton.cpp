@@ -7,7 +7,7 @@ void low_auton(){
         PID drive(0.4,0,0.1,1.1,0,0.7);
         //Go to match loader
         Top.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-        drive.go(-31.5, 0);
+        drive.go(-32, 0);
         drive.go(90,1,1500);
         //Load
         loader.extend();
@@ -17,7 +17,7 @@ void low_auton(){
         Top.brake();
         drive.go(-8,0,1000);
         delay(500);
-        drive.go(-0.5,0,250);
+        drive.go(-1,0,250);
         delay(500);
         //Go to goal
         drive.go(6,0);

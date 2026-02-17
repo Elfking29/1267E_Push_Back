@@ -20,10 +20,12 @@ PID::PID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,doubl
     this->ratio=1035/180.0;
     this->minimum=22;
     this->fb_max=67;
+    this->lw_max=30;
     this->tu_max=60;
     this->settle=3;
     this->e_break=12;
     this->a_break=2;
+
 }
 
 void PID::tare_prepare(){
@@ -67,20 +69,18 @@ void PID::set_finished(){
 }
 
 void PID::go(double distangle, bool turn, int timeout){
-    double target,arget,l_error,r_error,a_error;
     int loops=0;
+    double target;
     //Do Math and Prepare
     if (!turn){
         //Forwards/Backwards
         target = (360*distangle*60)/(3.25*3.1416*36);
-        arget = 0;
     }
     else {
         //Turning
         target = distangle*this->ratio;
-        arget = (distangle+imu.get_rotation());
     }
-    double loe,roe,aoe,lp,rp,ap,li,ri,ai,ld,rd,ad,l_motor,r_motor,a_motor,e_motor,l_encode,r_encode=0;
+    double l_error,r_error,loe,roe,lp,rp,li,ri,ld,rd,l_motor,r_motor,e_motor,l_encode,r_encode=0;
     bool finish=false;
     this->tare_prepare();
     uint32_t time,start=millis();
@@ -100,8 +100,8 @@ void PID::go(double distangle, bool turn, int timeout){
             rp = this->kp_fb*r_error;
             //Integral for both sides
             float arb_num = 100;
-            li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
-            ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
+            li = l_error>std::abs(100)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
+            ri = r_error>std::abs(100)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
             //Derivative for both sides
             ld = this->kd_fb*(l_error-loe)/dt;
             rd = this->kd_fb*(r_error-roe)/dt;
@@ -117,21 +117,13 @@ void PID::go(double distangle, bool turn, int timeout){
 
             if (std::fabs(r_motor)>this->fb_max){r_motor=this->fb_max*get_sign(r_motor);}
             else if (std::fabs(r_motor)<this->minimum){r_motor=this->minimum*get_sign(r_motor);}
+
+            if (std::fabs(l_error)<std::fabs(target*0.25) && l_motor>lw_max){l_motor=lw_max*get_sign(l_motor);}
+            if (std::fabs(r_error)<std::fabs(target*0.25) && r_motor>lw_max){r_error=lw_max*get_sign(r_motor);}
+
         }
         else {
             //Turning
-
-            //Angle Math
-            //This isn't accurate right now for some reason
-            a_error=10*(arget-imu.get_rotation()); 
-            ap = this->kp_tu*a_error;
-            float arb_num = 100;
-            ai = a_error>std::abs(arb_num)?0:a_error==0?0:this->ki_tu*(li+this->dt*a_error);
-            ad = this->kd_tu*(a_error-aoe)/this->dt;
-            aoe = a_error;
-            a_motor = ap+ai+ad;
-            if (std::fabs(a_motor)>this->tu_max){a_motor=this->tu_max*get_sign(a_motor);}
-            else if (std::fabs(a_motor)<this->minimum){a_motor=this->minimum*get_sign(a_motor);}
 
             //Encoder Math
 
@@ -142,8 +134,8 @@ void PID::go(double distangle, bool turn, int timeout){
             r_error = target-r_encode;
             lp = this->kp_fb*l_error;
             rp = this->kp_fb*r_error;
-            li = l_error>std::abs(arb_num)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
-            ri = r_error>std::abs(arb_num)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
+            li = l_error>std::abs(100)?0:l_error==0?0:this->ki_fb*(li+this->dt*l_error);
+            ri = r_error>std::abs(100)?0:r_error==0?0:this->ki_fb*(ri+this->dt*r_error);
             ld = this->kd_fb*(l_error-loe)/dt;
             rd = this->kd_fb*(r_error-roe)/dt;
             loe = l_error;
@@ -152,8 +144,7 @@ void PID::go(double distangle, bool turn, int timeout){
             if (std::fabs(e_motor)>this->tu_max){e_motor=this->tu_max*get_sign(e_motor);}
             else if (std::fabs(e_motor)<this->minimum){e_motor=this->minimum*get_sign(e_motor);}
 
-            //Combine the 2
-            l_motor=(e_motor+e_motor)/2;
+            l_motor=e_motor;
             r_motor=-l_motor;
 
         }
@@ -162,11 +153,8 @@ void PID::go(double distangle, bool turn, int timeout){
 
         //Breakpoints
         if (std::fabs((l_error+r_error)/2)<=this->e_break){
-            if (!turn || std::fabs(a_error)<=this->a_break || true){
-                if (loops<this->settle){loops++;}
-                else{finish=1;}
-            }
-            else{loops=0;}
+            if (loops<this->settle){loops++;}
+            else{finish=1;}
         }
         else{loops=0;}
         if (millis()>=start+timeout && timeout!=-1){finish=1;}

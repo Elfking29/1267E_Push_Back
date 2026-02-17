@@ -11,7 +11,7 @@ pros::Controller Con1(pros::E_CONTROLLER_MASTER);
 // NOTE: negative port number for reverse
 
 // port numbers are placeholders
-Motor FL (-17,v5::MotorGears::blue);
+Motor FL (-8,v5::MotorGears::blue);
 Motor ML (-11,v5::MotorGears::blue);
 Motor BL (-14,v5::MotorGears::blue);
 

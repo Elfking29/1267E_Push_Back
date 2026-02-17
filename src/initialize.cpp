@@ -164,12 +164,12 @@ void autonomous() {
 	logo();
 	switch (auto_select){
 		case 0:
-			 Top.move(127); delay(250); Top.move(0); break //Skills
+			 skills_auton(); break; //Skills
 		case 1:
 			high_auton(); break;
 		case 2:
 			low_auton(); break;
 		case 3:
-			break; //Nothing Yet
+			Top.move(127); delay(250); Top.move(0); break; //Nothing Yet
 	}
 }
