@@ -27,6 +27,7 @@ extern pros::adi::Pneumatics triangle;
 // Sensors
 extern pros::Imu imu;
 extern adi::DigitalIn load_button;
+extern pros::Optical colory;
 
 //Variables
 extern bool color;

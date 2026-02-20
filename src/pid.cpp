@@ -17,9 +17,9 @@ PID::PID(double kp_fb,double ki_fb,double kd_fb, double kp_tu,double ki_tu,doubl
     this->kd_tu = kd_tu;
 
     this->dt=dt;
-    this->ratio=1035/180.0;
+    this->ratio=1040/180.0;
     this->minimum=22;
-    this->fb_max=67;
+    this->fb_max=72;
     this->lw_max=30;
     this->tu_max=60;
     this->settle=3;
@@ -83,6 +83,7 @@ void PID::go(double distangle, bool turn, int timeout){
     double l_error,r_error,loe,roe,lp,rp,li,ri,ld,rd,l_motor,r_motor,e_motor,l_encode,r_encode=0;
     bool finish=false;
     this->tare_prepare();
+    FL.tare_position();
     uint32_t time,start=millis();
 
     //Actual Loop
@@ -118,8 +119,11 @@ void PID::go(double distangle, bool turn, int timeout){
             if (std::fabs(r_motor)>this->fb_max){r_motor=this->fb_max*get_sign(r_motor);}
             else if (std::fabs(r_motor)<this->minimum){r_motor=this->minimum*get_sign(r_motor);}
 
-            if (std::fabs(l_error)<std::fabs(target*0.25) && l_motor>lw_max){l_motor=lw_max*get_sign(l_motor);}
-            if (std::fabs(r_error)<std::fabs(target*0.25) && r_motor>lw_max){r_error=lw_max*get_sign(r_motor);}
+            if (std::fabs(l_error)<std::fabs(target*0.3) && l_motor>lw_max){l_motor=lw_max*get_sign(l_motor);}
+            if (std::fabs(r_error)<std::fabs(target*0.3) && r_motor>lw_max){r_motor=lw_max*get_sign(r_motor);}
+
+            
+            //screen::print(pros::E_TEXT_LARGE,2,"%f",FL.get_position());
 
         }
         else {

@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pros/abstract_motor.hpp"
+#include "pros/optical.hpp"
 using namespace pros;
 
 // VEXCode Style Robot Configuration
@@ -11,7 +12,7 @@ pros::Controller Con1(pros::E_CONTROLLER_MASTER);
 // NOTE: negative port number for reverse
 
 // port numbers are placeholders
-Motor FL (-8,v5::MotorGears::blue);
+Motor FL (-7,v5::MotorGears::blue);
 Motor ML (-11,v5::MotorGears::blue);
 Motor BL (-14,v5::MotorGears::blue);
 
@@ -35,7 +36,7 @@ pros::adi::Pneumatics triangle('h', false);
 // Sensors
 pros::Imu imu(3);
 pros::adi::DigitalIn load_button ('d');
-
+pros::Optical colory(3);
 
 //Variables
 bool color;

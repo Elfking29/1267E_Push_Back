@@ -7,7 +7,6 @@
 #include <cstdio>
 
 void opcontrol() {
-	logo();
 	// Define opcontrol variables and pre-opcontrol code here
 	uint32_t sleep_time = millis();
 	int count=0;
@@ -23,10 +22,7 @@ void opcontrol() {
 	//lift_piston.extend();
 	loader.retract();
 	triangle.extend();
-
-
-	int hue[] = {220,5}; //Blue, Red
-
+	colory.set_led_pwm(100);
 	
 	// Active opcontrol code
 	while (true){
@@ -104,13 +100,24 @@ void opcontrol() {
 		}
 		*/
 		
-	
-		
-		//Printing
-		if (!count%20){Con1.print(0, 0, "%i",leftX);count=0;}
-		else if (!count%15){Con1.print(1, 0, "Bat:%d Con:%d",pros::battery::get_capacity(),Con1.get_battery_capacity());}
-		else if (!count%10){}//Con1.print(2, 0, "Line 3");}
-		else if (!count%5){}//Could do Rumble here
+		if (within(colory.get_hue(),0,10)){
+			//Red
+			screen::set_eraser(0xd22630);
+			screen::erase();
+			Con1.print(0,0,"Red.");
+		}
+		else if (within(colory.get_hue(),225,50)){
+			//Blue
+			screen::set_eraser(0x0077c8);
+			screen::erase();
+			Con1.print(0,0,"Blue");
+		}
+		else {
+			//Else
+			screen::set_eraser(0x004e38);
+			screen::erase();
+			Con1.print(0,0,"None");
+		}
 
 
 		//10 msec loop
