@@ -13,14 +13,16 @@ void low_auton(){
         loader.extend();
         delay(400);
         Intake.move(127);
-        Middle.move(96);
+        Middle.move(127);
         Top.brake();
         drive.go(-8,0,1000);
-        delay(500);
+        delay(250);
+        drive.go(1,0,250);
         drive.go(-1,0,250);
+        drive.go(1,0,250);
         delay(250);
         //Go to goal
-        Intake.move(-64);
+        Intake.move(-40);
         Middle.move(-64);
         drive.go(6,0);
         Intake.move(32);
